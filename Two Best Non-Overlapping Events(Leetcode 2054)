@@ -1,0 +1,31 @@
+class Solution {
+    public int bestEvents(int[][] arr, int i, int count, int[][] dp) {
+        if (count == 2 || i >= arr.length) 
+            return 0;
+        if (dp[i][count] == -1) {
+            int r = arr[i][1];
+            int l = i + 1;
+            int h = arr.length - 1;
+            while (l < h) {
+                int m = l + ((h - l) >> 1);
+                if (arr[m][0] > r) 
+                    h = m;
+                else 
+                    l = m + 1;
+            }
+            int a =arr[i][2] +(l < arr.length && arr[l][0] > r
+                        ? bestEvents(arr, l, count + 1, dp)
+                        : 0);
+            int b = bestEvents(arr, i + 1, count, dp);
+            dp[i][count] = Math.max(a, b);
+        }
+        return dp[i][count];
+    }
+    public int maxTwoEvents(int[][] events) {
+        Arrays.sort(events, (a, b) -> a[0] - b[0]);
+        int[][] dp = new int[events.length][3];
+        for (int[] i : dp) 
+            Arrays.fill(i, -1);
+        return bestEvents(events, 0, 0, dp);
+    }
+}
